@@ -20,7 +20,7 @@ const EmployerDashboard = () => {
           fetch(`${BASE_URL}/api/employers/dashboard`, {
             headers: { 'Authorization': `Bearer ${token}` }
           }),
-          fetch(`${BASE_URL}/api/jobs/listjob?page=${currentPage - 1}&size=10`, {
+          fetch(`${BASE_URL}/api/jobs/listactivejobs?page=${currentPage - 1}&size=10`, {
             headers: { 'Authorization': `Bearer ${token}` }
           })
         ]);

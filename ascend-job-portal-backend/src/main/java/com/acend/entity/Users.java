@@ -39,4 +39,5 @@ public class Users {
 	private boolean isBlocked;
 	private boolean isApproved;
 	private LocalDateTime createdAt;
+	private String reason;
 }

@@ -94,11 +94,12 @@ export default function RegisterPage() {
 
       if (response.ok) {
         setStep('details')
+        setError('')
         setFormData(prev => ({ ...prev, email }))
-        setErrors({})
+        // setErrors(" ")
       } else {
         const errorData = await response.json()
-        setError(errorData.message || 'OTP verification failed. Please try again.')
+        setError(errorData.error || 'OTP verification failed. Please try again.')
       }
     } catch (error) {
       console.error('OTP verification failed:', error)

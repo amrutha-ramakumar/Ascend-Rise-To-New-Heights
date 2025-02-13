@@ -14,7 +14,9 @@ public interface JobService {
 	List<JobDto> getAllJobs(String email);
 	JobDto getJobById(Long id);
 	Job saveJob(JobDto jobDTO, String email);
-	Job verifyJob(Long jobId, boolean approved);
+	Job verifyJob(Long jobId);
 	Job updateJob(Long jobId, JobDto jobDTO, String email);
+	Page<JobDto> getUnapprovedJobs(Pageable pageable);
+	Page<JobDto> listexpiredJob(String email, Pageable pageable);
 
 }

@@ -23,6 +23,7 @@ public class Message {
     private Long id;
 
     private Long chatId;
+    private String name;
     private String sender;
     private String content;
     private LocalDateTime sentAt = LocalDateTime.now();

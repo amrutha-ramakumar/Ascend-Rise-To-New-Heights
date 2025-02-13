@@ -3,6 +3,8 @@ package com.acend.service;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.acend.dto.ApplicationDetails;
 import com.acend.dto.ApplicationDto;
@@ -18,5 +20,7 @@ public interface ApplicationService {
 	Applicationdata getApplicationsById(Long job);
 
 	void updateApplicationStatus(Long applicationId, String applicationStatus);
+
+	ResponseEntity<?> applyToJob(String email, Long jobId, MultipartFile resume, String additionalDetails);
 
 }

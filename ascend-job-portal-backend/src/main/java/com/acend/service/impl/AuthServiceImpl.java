@@ -82,10 +82,9 @@ public class AuthServiceImpl implements AuthService {
 			users.setRole(registerRequest.getRole());
 			users.setBlocked(false);
 			users.setCreatedAt(LocalDateTime.now());
-			if(registerRequest.getRole()==Roles.Employer) {
+			if (registerRequest.getRole() == Roles.Employer) {
 				users.setApproved(false);
-			}
-			else {
+			} else {
 				users.setApproved(true);
 			}
 			userRepository.save(users);
@@ -112,7 +111,6 @@ public class AuthServiceImpl implements AuthService {
 	public ResponseEntity<?> loginUser(LoginRequest loginRequest) {
 		String email = loginRequest.getEmail();
 		String password = loginRequest.getPassword();
-		
 
 		// 1. Authenticate the user
 		Authentication authentication = authenticate(email, password);
@@ -120,27 +118,22 @@ public class AuthServiceImpl implements AuthService {
 
 		// 2. Fetch user details
 		Users user = userRepository.findByEmail(email);
-		
+
 		if (user == null) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("User not found"));
 		}
 		Roles roleFromFrontend = user.getRole();
-		
+
 		String token = jwtProvider.generateToken(authentication);
 
 		// 6. Check if the user is an admin
 		if (user.getRole().equals("Admin")) {
-			return ResponseEntity.ok(new AuthResponse(token, "Signin Success (Admin)", user.getRole().name().toLowerCase()));
-		}
-	
-		if (!user.getRole().equals(roleFromFrontend)) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AuthResponse("Invalid role for the user"));
+			return ResponseEntity
+					.ok(new AuthResponse(token, "Signin Success (Admin)", user.getRole().name().toLowerCase()));
 		}
 
-		if (user.getRole().equals(Roles.Employer)) {
-			
-			if (!user.isApproved())
-				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("Admin not approved"));
+		if (!user.getRole().equals(roleFromFrontend)) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AuthResponse("Invalid role for the user"));
 		}
 
 		SubscriptionPayment payment = subscriptionPaymentRepository.findFirstByUserOrderByCreatedAtDesc(user);
@@ -167,11 +160,17 @@ public class AuthServiceImpl implements AuthService {
 		}
 
 		if (user.isBlocked()) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AuthResponse("User is blocked"));
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new AuthResponse("Reason: " +user.getReason()));
 		}
 
-		return ResponseEntity
-				.ok(new AuthResponse(token, "Signin Success", userSubscription.getStatus(), user.getRole().name().toLowerCase()));
+		if (user.getRole().equals(Roles.Employer)) {
+
+			if (!user.isApproved())
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("Admin not approved"));
+		}
+
+		return ResponseEntity.ok(new AuthResponse(token, "Signin Success", userSubscription.getStatus(),
+				user.getRole().name().toLowerCase()));
 	}
 
 	private Authentication authenticate(String username, String password) {
@@ -192,13 +191,13 @@ public class AuthServiceImpl implements AuthService {
 			if (user == null) {
 				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse("User not found"));
 			}
-			
+
 			user.setPassword(passwordEncoder.encode(loginRequest.getPassword()));
 			userRepository.save(user);
-			return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponse("Password set Changed Successfully"));
+			return ResponseEntity.status(HttpStatus.CREATED)
+					.body(new AuthResponse("Password set Changed Successfully"));
 
-		}
-		catch (Exception e){
+		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponse("Some Error occured"));
 
 		}

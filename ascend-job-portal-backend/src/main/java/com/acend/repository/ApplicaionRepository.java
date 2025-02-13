@@ -27,5 +27,7 @@ public interface ApplicaionRepository extends JpaRepository<Application, Long>{
 	long countByJobPost(Job jobPost);
 
     int countByAppliedAt(LocalDateTime date);
+
+	boolean existsByJobSeekerAndJobPost(Jobseeker jobSeeker, Job job);
 	
 }

@@ -67,29 +67,50 @@ public class AdminController {
 			@RequestBody VerifyRequest request) {
 		return employerService.verifyEmployer(request);
 	}
+// works well changing because need reason for blocking
+//	@PostMapping("/block/{id}")
+//	public ResponseEntity<?> blockUser(@RequestHeader("Authorization") String token, @PathVariable Long id) {
+//		try {
+//			String message = userService.blockUser(id);
+//			return ResponseEntity.ok(new HashMap<String, String>() {
+//				{
+//					put("message", message);
+//				}
+//			}); 
+//		} catch (RuntimeException e) {
+//			return ResponseEntity.status(404).body(new HashMap<String, String>() {
+//				{
+//					put("message", e.getMessage());
+//				}
+//			}); 
+//		} catch (Exception e) {
+//			return ResponseEntity.status(500).body(new HashMap<String, String>() {
+//				{
+//					put("message", "An error occurred while blocking the user.");
+//				}
+//			});
+//		}
+//	}
 
 	@PostMapping("/block/{id}")
-	public ResponseEntity<?> blockUser(@RequestHeader("Authorization") String token, @PathVariable Long id) {
-		try {
-			String message = userService.blockUser(id);
-			return ResponseEntity.ok(new HashMap<String, String>() {
-				{
-					put("message", message);
-				}
-			}); 
-		} catch (RuntimeException e) {
-			return ResponseEntity.status(404).body(new HashMap<String, String>() {
-				{
-					put("message", e.getMessage());
-				}
-			}); 
-		} catch (Exception e) {
-			return ResponseEntity.status(500).body(new HashMap<String, String>() {
-				{
-					put("message", "An error occurred while blocking the user.");
-				}
-			});
-		}
+	public ResponseEntity<?> blockUser(@RequestHeader("Authorization") String token, 
+	                                   @PathVariable Long id, 
+	                                   @RequestBody Map<String, String> requestBody) {
+	    try {
+	        String reason = requestBody.get("reason"); // Extract the reason from request body
+	        String message = userService.blockUser(id, reason); // Pass the reason to the service
+	        return ResponseEntity.ok(new HashMap<String, String>() {{
+	            put("message", message);
+	        }});
+	    } catch (RuntimeException e) {
+	        return ResponseEntity.status(404).body(new HashMap<String, String>() {{
+	            put("message", e.getMessage());
+	        }});
+	    } catch (Exception e) {
+	        return ResponseEntity.status(500).body(new HashMap<String, String>() {{
+	            put("message", "An error occurred while blocking the user.");
+	        }});
+	    }
 	}
 
 	@PostMapping("/unblock/{id}")

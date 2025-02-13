@@ -14,22 +14,24 @@ public class UserServiceImpl implements UserService{
 	@Autowired
     private UserRepository usersRepository;
 
-    public String blockUser(Long userId) {
-        Optional<Users> userOptional = usersRepository.findById(userId);
-        if (!userOptional.isPresent()) {
-            throw new RuntimeException("User not found with id: " + userId);
-        }
+	// works well changing because need reason for blocking
 
-        Users user = userOptional.get();
-        if (user.isBlocked()) {
-            return "User is already blocked.";
-        }
-
-        user.setBlocked(true);
-        usersRepository.save(user);
-
-        return "User has been successfully blocked.";
-    }
+//    public String blockUser(Long userId) {
+//        Optional<Users> userOptional = usersRepository.findById(userId);
+//        if (!userOptional.isPresent()) {
+//            throw new RuntimeException("User not found with id: " + userId);
+//        }
+//
+//        Users user = userOptional.get();
+//        if (user.isBlocked()) {
+//            return "User is already blocked.";
+//        }
+//
+//        user.setBlocked(true);
+//        usersRepository.save(user);
+//
+//        return "User has been successfully blocked.";
+//    }
 
     public String unblockUser(Long userId) {
         Optional<Users> userOptional = usersRepository.findById(userId);
@@ -43,6 +45,7 @@ public class UserServiceImpl implements UserService{
         }
 
         user.setBlocked(false);
+        user.setReason(null);
         usersRepository.save(user);
 
         return "User has been successfully unblocked.";
@@ -53,4 +56,24 @@ public class UserServiceImpl implements UserService{
 		Users user = usersRepository.findByEmail(email);
 		return user.isBlocked();
 	}
+
+	@Override
+	public String blockUser(Long userId, String reason) {
+	    Optional<Users> userOptional = usersRepository.findById(userId);
+	    if (!userOptional.isPresent()) {
+	        throw new RuntimeException("User not found with id: " + userId);
+	    }
+
+	    Users user = userOptional.get();
+	    if (user.isBlocked()) {
+	        return "User is already blocked.";
+	    }
+
+	    user.setBlocked(true);
+	    user.setReason(reason); // Assuming you have a field to store the block reason
+	    usersRepository.save(user);
+
+	    return "User has been successfully blocked for the following reason: " + reason;
+	}
+
 }

@@ -17,6 +17,7 @@ public interface JobRepository extends JpaRepository<Job, Long>{
 
 	Page<Job> findAllByEmployer(Employer employer, Pageable pageable);
 
+	Page<Job> findByApproved(boolean approved,Pageable pagable);
 	int countByEmployer(Employer employer);
 
 	List<Job> findByEmployer(Employer employer);

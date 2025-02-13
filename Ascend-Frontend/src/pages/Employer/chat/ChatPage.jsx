@@ -1,440 +1,199 @@
-// import { useState, useEffect } from "react";
-// import { useParams } from "react-router-dom";
-// import BASE_URL from "../../../api/BaseUrl";
-
+// use this 
+// import { useState, useEffect, useRef } from "react"
+// import { useParams } from "react-router-dom"
+// import BASE_URL from "../../../api/BaseUrl"
 // export default function ChatPage() {
-//   const { applicationId } = useParams(); // Get the applicationId from the route
-//   const [messages, setMessages] = useState([]);
-//   const [newMessage, setNewMessage] = useState("");
-//   const [error, setError] = useState(null);
+//   const { chatId } = useParams()
+//   const [messages, setMessages] = useState([])
+//   const [message, setMessage] = useState("")
+//   // const [jobseekerName, setJobseekerName] = useState("") 
+//   const messagesEndRef = useRef(null)
 
 //   useEffect(() => {
-//     fetchMessages();
-//   }, [applicationId]);
+//     fetchMessages()
+//   }, [])
+
+//   useEffect(() => {
+//     scrollToBottom()
+//   }, [messages])
+
+//   const scrollToBottom = () => {
+//     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+//   }
 
 //   const fetchMessages = async () => {
+//     const token = localStorage.getItem("token")
 //     try {
-//       const token = localStorage.getItem("token");
-//       const response = await fetch(`${BASE_URL}/api/chats/${applicationId}`, {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-
-//       if (!response.ok) {
-//         throw new Error("Failed to fetch chat messages.");
-//       }
-
-//       const data = await response.json();
-//       setMessages(data);
-//     } catch (error) {
-//       console.error("Error fetching messages:", error);
-//       setError("Failed to load chat messages.");
-//     }
-//   };
-
-//   const handleSendMessage = async () => {
-//     if (!newMessage.trim()) return;
-
-//     try {
-//       const token = localStorage.getItem("token");
-//       const response = await fetch(`${BASE_URL}/api/chats/${applicationId}`, {
-//         method: "POST",
+//       const response = await fetch(`${BASE_URL}/api/chat/${chatId}/messages`, {
+//         method: "GET",
 //         headers: {
 //           Authorization: `Bearer ${token}`,
 //           "Content-Type": "application/json",
 //         },
-//         body: JSON.stringify({ content: newMessage }),
-//       });
+//       })
 
-//       if (!response.ok) {
-//         throw new Error("Failed to send message.");
+//       if (response.status === 204) {
+//         setMessages([])
+//         return
 //       }
 
-//       const savedMessage = await response.json();
-//       setMessages((prev) => [...prev, savedMessage]);
-//       setNewMessage("");
-//     } catch (error) {
-//       console.error("Error sending message:", error);
-//       setError("Failed to send message.");
-//     }
-//   };
+//       if (response.ok) {
+//         const data = await response.json()
+//         setMessages(data)
 
-//   return (
-//     <div className="container mx-auto mt-20 px-4 py-8 max-w-full">
-//       <h1 className="text-2xl font-bold mb-4">Chat with Applicant</h1>
-//       <div className="chat-window border rounded-lg shadow-lg p-4">
-//         <div className="messages overflow-y-auto max-h-96">
-//           {messages.length > 0 ? (
-//             messages.map((msg) => (
-//               <div key={msg.id} className="message mb-2">
-//                 <p>
-//                   <strong>{msg.senderName}:</strong> {msg.content}
-//                 </p>
-//                 <span className="text-xs text-gray-500">{msg.timestamp}</span>
-//               </div>
-//             ))
-//           ) : (
-//             <p className="text-gray-500">No messages yet.</p>
-//           )}
-//         </div>
-//         <div className="message-input mt-4">
-//           <input
-//             type="text"
-//             value={newMessage}
-//             onChange={(e) => setNewMessage(e.target.value)}
-//             placeholder="Type your message..."
-//             className="border rounded-lg w-full p-2"
-//           />
-//           <button
-//             onClick={handleSendMessage}
-//             className="mt-2 bg-blue-500 text-white px-4 py-2 rounded-lg"
-//           >
-//             Send
-//           </button>
-//         </div>
-//       </div>
-//       {error && (
-//         <div className="text-red-500 mt-2">
-//           <p>{error}</p>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-// import { useState, useEffect } from "react";
-// import { useParams } from "react-router-dom";
-// import BASE_URL from "../../../api/BaseUrl";
-
-// export default function ChatPage() {
-//   const { applicationId } = useParams(); // Get the applicationId from the route
-//   const [messages, setMessages] = useState([]);
-//   const [newMessage, setNewMessage] = useState("");
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     fetchMessages();
-//   }, [applicationId]);
-
-//   const fetchMessages = async () => {
-//     try {
-//       const token = localStorage.getItem("token");
-//       const response = await fetch(`${BASE_URL}/api/chats/${applicationId}`, {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-
-//       if (!response.ok) {
-//         throw new Error("Failed to fetch messages");
+//         // if (data.length > 0) {
+//         //   setJobseekerName(data[0].name)
+//         // }
 //       }
 
-//       const data = await response.json();
-//       setMessages(data.messages); // assuming the response structure contains 'messages'
-//     } catch (error) {
-//       setError("Failed to load messages. Please try again."+error);
-//     }
-//   };
-
-//   const handleSendMessage = async () => {
-//     if (!newMessage.trim()) return;
-
-//     try {
-//       const token = localStorage.getItem("token");
-//       const response = await fetch(`${BASE_URL}/api/chats/${applicationId}`, {
-//         method: "POST",
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ message: newMessage }),
-//       });
-
-//       if (!response.ok) {
-//         throw new Error("Failed to send message");
-//       }
-
-//       setNewMessage(""); // Clear input after sending
-//       fetchMessages(); // Refresh messages after sending
-//     } catch (error) {
-//       setError("Failed to send message. Please try again."+error);
-//     }
-//   };
-
-//   return (
-//     <div className="container mx-auto mt-8 px-4 py-8">
-//       <h1 className="text-3xl font-bold text-center mb-6">Chat with Candidate</h1>
-//       {error && <p className="text-red-600">{error}</p>}
       
-//       <div className="bg-white shadow-lg rounded-lg p-4 space-y-4">
-//         <div className="messages overflow-y-scroll max-h-80 mb-4">
-//           {messages.length === 0 ? (
-//             <p>No messages yet. Start the conversation!</p>
-//           ) : (
-//             messages.map((message, index) => (
-//               <div key={index} className="message">
-//                 <p><strong>{message.sender}: </strong>{message.text}</p>
-//               </div>
-//             ))
-//           )}
-//         </div>
-
-//         <div className="input-section flex items-center">
-//           <input
-//             type="text"
-//             className="border w-full p-2 rounded-lg mr-4"
-//             value={newMessage}
-//             onChange={(e) => setNewMessage(e.target.value)}
-//             placeholder="Type your message"
-//           />
-//           <button
-//             onClick={handleSendMessage}
-//             className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-//           >
-//             Send
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-// import { useEffect, useState } from "react";
-// import BASE_URL from "../../../api/BaseUrl";
-// import PropTypes from "prop-types";
-// const ChatPage = ({ applicationId }) => {
-//   const [messages, setMessages] = useState([]);
-//   const [newMessage, setNewMessage] = useState("");
-//   const [error, setError] = useState("");
-//   const [loading, setLoading] = useState(false);
-
-//   // Replace with your backend base URL
-
-//   // Fetch messages or create a chat dynamically
-//   const fetchMessages = async () => {
-//     try {
-//       setLoading(true);
-//       const token = localStorage.getItem("token");
-//       const response = await fetch(`${BASE_URL}/api/chats/${applicationId}`, {
-//         headers: { Authorization: `Bearer ${token}` },
-//       });
-
-//       if (!response.ok) {
-//         throw new Error("Failed to fetch messages");
-//       }
-
-//       const data = await response.json();
-//       setMessages(data.messages || []); // Initialize with empty messages if no chat exists
 //     } catch (error) {
-//       setError("Failed to load messages. Please try again. " + error.message);
-//     } finally {
-//       setLoading(false);
+//       console.error("Error fetching messages:", error)
 //     }
-//   };
+//   }
 
-//   // Handle sending a new message
 //   const sendMessage = async () => {
-//     if (!newMessage.trim()) return;
+//     if (!message.trim()) return
+
+//     const token = localStorage.getItem("token")
 
 //     try {
-//       const token = localStorage.getItem("token");
-//       const response = await fetch(`${BASE_URL}/api/chats/${applicationId}/messages`, {
+//       const response = await fetch(`${BASE_URL}/api/chat/${chatId}/messages`, {
 //         method: "POST",
 //         headers: {
-//           "Content-Type": "application/json",
 //           Authorization: `Bearer ${token}`,
+//           "Content-Type": "application/json",
 //         },
-//         body: JSON.stringify({ text: newMessage }),
-//       });
+//         body: JSON.stringify({ message }),
+//       })
 
-//       if (!response.ok) {
-//         throw new Error("Failed to send message");
+//       if (response.ok) {
+//         const newMessage = await response.json()
+//         setMessages((prevMessages) => [...prevMessages, newMessage])
+//         setMessage("")
 //       }
-
-//       const message = await response.json();
-//       setMessages((prevMessages) => [...prevMessages, message]);
-//       setNewMessage(""); // Clear the input field
 //     } catch (error) {
-//       setError("Failed to send the message. Please try again."+error);
+//       console.error("Error sending message:", error)
 //     }
-//   };
+//   }
 
-//   // Load messages when the component mounts
-//   useEffect(() => {
-//     fetchMessages();
-//   }, [applicationId]);
+//   // Assuming the first message will have the sender's name
+//   const senderName = messages.length > 0 ? messages[0].senderName : ""
 
 //   return (
-//     <div className="chat-page container mx-auto p-4">
-//       <h2 className="text-2xl font-bold mb-4">Chat</h2>
-
-//       {loading && <p>Loading messages...</p>}
-//       {error && <p className="text-red-500">{error}</p>}
-
-//       {/* Messages Display */}
-//       <div className="messages overflow-y-scroll max-h-80 mb-4 p-2 border border-gray-300 rounded">
-//         {messages.length === 0 ? (
-//           <p>No messages yet. Start the conversation!</p>
-//         ) : (
-//           messages.map((message, index) => (
-//             <div
-//               key={index}
-//               className={`message p-2 mb-2 rounded ${
-//                 message.sender === "employer" ? "bg-blue-100" : "bg-green-100"
-//               }`}
+//     <div className="flex justify-center items-center min-h-screen bg-gray-200">
+//       <div className="bg-white w-full max-w-4xl rounded-lg shadow-lg overflow-hidden">
+//         <header className="bg-green-500 text-white p-4 shadow-md">
+//           <h1 className="text-xl font-semibold">Chat</h1>
+//         </header>
+//         <div className="h-96 overflow-y-auto p-4 space-y-4">
+//           {messages.length === 0 ? (
+//             <p className="text-gray-500 text-center">No messages yet. Start the conversation!</p>
+//           ) : (
+//             <>
+//               {/* Show sender name at the top */}
+//               <div className="text-lg font-semibold text-gray-700">{senderName}</div>
+//               {messages.map((msg) => (
+//                 <div
+//                   key={msg.id}
+//                   className={`flex ${msg.sender === "Employer" ? "justify-end" : "justify-start"}`}
+//                 >
+//                   <div
+//                     className={`max-w-xs md:max-w-md lg:max-w-lg xl:max-w-xl rounded-lg p-3 ${
+//                       msg.sender === "jobseeker"
+//                         ? "bg-green-500 text-white rounded-br-none"
+//                         : "bg-blue-100 text-gray-800 rounded-bl-none"
+//                     }`}
+//                   >
+//                     <p>{msg.content}</p>
+//                   </div>
+//                 </div>
+//               ))}
+//             </>
+//           )}
+//           <div ref={messagesEndRef} />
+//         </div>
+//         <div className="bg-white p-4 shadow-lg">
+//           <div className="flex items-center space-x-2">
+//             <input
+//               type="text"
+//               value={message}
+//               onChange={(e) => setMessage(e.target.value)}
+//               placeholder="Type a message"
+//               className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+//               onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+//             />
+//             <button
+//               onClick={sendMessage}
+//               className="bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
 //             >
-//               <p>
-//                 <strong>{message.sender}: </strong>
-//                 {message.text}
-//               </p>
-//             </div>
-//           ))
-//         )}
-//       </div>
-
-//       {/* New Message Input */}
-//       <div className="new-message flex items-center">
-//         <input
-//           type="text"
-//           className="flex-1 border border-gray-300 p-2 rounded mr-2"
-//           placeholder="Type your message..."
-//           value={newMessage}
-//           onChange={(e) => setNewMessage(e.target.value)}
-//         />
-//         <button
-//           className="bg-blue-500 text-white p-2 rounded"
-//           onClick={sendMessage}
-//         >
-//           Send
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-// ChatPage.propTypes = {
-//     applicationId: PropTypes.number.isRequired,
-//   };
-// export default ChatPage;
-
-
-// import { useState, useEffect } from "react";
-// import { useParams } from "react-router-dom";
-// import BASE_URL from "../../../api/BaseUrl";
-
-// export default function ChatPage() {
-//   const { chatId } = useParams();
-//   const [messages, setMessages] = useState([]);
-//   const [message, setMessage] = useState("");
-//   const [sender, setSender] = useState("employer");  // Or "applicant" depending on who is logged in
-
-//   useEffect(() => {
-//     fetchMessages();
-//   }, [chatId]);
-
-//   const fetchMessages = async () => {
-//     const token = localStorage.getItem("token");
-//     const response = await fetch(`${BASE_URL}/api/chat/${chatId}/messages`, {
-//       method: "GET",
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//         "Content-Type": "application/json",
-//       },
-//     });
-
-//     if (response.ok) {
-//       const data = await response.json();
-//       setMessages(data);
-//     }
-//   };
-// console.log(setSender);
-//   const sendMessage = async () => {
-//     const token = localStorage.getItem("token");
-
-//     const response = await fetch(`${BASE_URL}/api/chat/${chatId}/messages`, {
-//       method: "POST",
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ sender, message }),
-//     });
-
-//     if (response.ok) {
-//       const newMessage = await response.json();
-//       setMessages((prevMessages) => [...prevMessages, newMessage]);
-//       setMessage("");  // Clear input field
-//     }
-//   };
-
-//   return (
-//     <div className="container mx-auto mt-8 px-4 py-8 max-w-full">
-//       <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">Chat</h1>
-//       <div className="bg-white p-4 rounded-lg shadow-lg">
-//         <div className="messages overflow-auto max-h-96">
-//           {messages.map((msg) => (
-//             <div key={msg.id} className={`message ${msg.sender === "employer" ? "text-blue-600" : "text-green-600"}`}>
-//               <strong>{msg.sender}:</strong> {msg.message}
-//             </div>
-//           ))}
-//         </div>
-//         <div className="mt-4">
-//           <textarea
-//             value={message}
-//             onChange={(e) => setMessage(e.target.value)}
-//             className="w-full p-2 border border-gray-300 rounded-lg"
-//             placeholder="Type your message..."
-//           ></textarea>
-//           <button onClick={sendMessage} className="mt-2 bg-blue-500 text-white p-2 rounded-lg">
-//             Send
-//           </button>
+//               Send
+//             </button>
+//           </div>
 //         </div>
 //       </div>
 //     </div>
-//   );
+//   )
 // }
 
 
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import BASE_URL from "../../../api/BaseUrl";
 
-export default function ChatPage() {
-  const { chatId } = useParams(); // Get the chatId from the route parameters
-  const [messages, setMessages] = useState([]); // Store the list of messages
-  const [message, setMessage] = useState(""); // Store the input message content
-  const [sender, setSender] = useState("employer"); // Set sender type ("employer" or "applicant")
+import { useState, useEffect, useRef } from "react"
+import { useParams, useNavigate, useLocation } from "react-router-dom"
+import BASE_URL from "../../../api/BaseUrl"
 
-  // Fetch messages when the component mounts or chatId changes
-  useEffect(() => {
-    fetchMessages();
-  }, [chatId]);
-
-  // Function to fetch messages
-  const fetchMessages = async () => {
-    const token = localStorage.getItem("token"); // Get the JWT token from local storage
+export default function EmployerChatPage() {
+  const { chatId } = useParams()
+  const [messages, setMessages] = useState([])
+  const [message, setMessage] = useState("")
+  const messagesEndRef = useRef(null)
+  const navigate = useNavigate()
+  const location = useLocation();
+  const name = location.state?.name || "Unknown";
+  const startVideoCall = async () => {
+    const roomID = chatId
+    const token = localStorage.getItem("token")
     try {
-      const response = await fetch(`${BASE_URL}/api/chat/${chatId}/messages`, {
-        method: "GET",
+      await fetch(`${BASE_URL}/api/chat/${chatId}/messages`, {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-      });
+        body: JSON.stringify({ message: `Join the video call: /video-call?roomID=${roomID}` }),
+      })
 
-      if (response.status === 204) {
-        // No messages exist
-        setMessages([]); // Set messages to an empty array
-        return;
-      }
+      // Fetch messages to update the chat
+      fetchMessages()
+    } catch (error) {
+      console.error("Error sending video call link:", error)
+    }
+  }
 
+  useEffect(() => {
+    fetchMessages()
+    const intervalId = setInterval(fetchMessages, 5000)
+    return () => clearInterval(intervalId)
+  }, []) // Removed unnecessary chatId dependency
+
+  const fetchMessages = async () => {
+    const token = localStorage.getItem("token")
+    try {
+      const response = await fetch(`${BASE_URL}/api/chat/${chatId}/messages`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
       if (response.ok) {
-        const data = await response.json();
-        setMessages(data); // Set the fetched messages
+        const data = await response.json()
+        setMessages(data)
       }
     } catch (error) {
-      console.error("Error fetching messages:", error);
+      console.error("Error fetching messages:", error)
     }
-  };
-console.log(setSender);
-  // Function to send a new message
-  const sendMessage = async () => {
-    const token = localStorage.getItem("token"); // Get the JWT token from local storage
+  }
 
+  const sendMessage = async () => {
+    if (!message.trim()) return
+    const token = localStorage.getItem("token")
     try {
       const response = await fetch(`${BASE_URL}/api/chat/${chatId}/messages`, {
         method: "POST",
@@ -442,57 +201,82 @@ console.log(setSender);
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ sender, message }),
-      });
-
+        body: JSON.stringify({ message }),
+      })
       if (response.ok) {
-        const newMessage = await response.json();
-        setMessages((prevMessages) => [...prevMessages, newMessage]); // Append the new message
-        setMessage(""); // Clear the input field
+        setMessage("")
+        fetchMessages()
       }
     } catch (error) {
-      console.error("Error sending message:", error);
+      console.error("Error sending message:", error)
     }
-  };
+  }
+
+  const handleJoinCall = (roomID) => {
+    navigate(`/video-call?roomID=${roomID}&role=employer`)
+  }
 
   return (
-    <div className="container mx-auto mt-8 px-4 py-8 max-w-full">
-      <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">Chat</h1>
-      <div className="bg-white p-4 rounded-lg shadow-lg">
-        {/* Message Display Section */}
-        <div className="messages overflow-auto max-h-96">
-          {messages.length === 0 ? (
-            <p className="text-gray-500 text-center">No messages yet. Start the conversation!</p>
+    <div className="flex justify-center items-center min-h-screen bg-gray-200">
+      <div className="bg-white w-full max-w-4xl rounded-lg shadow-lg overflow-hidden">
+        <header className="bg-black text-white p-4 shadow-md flex justify-between items-center">
+          <h1 className="text-xl font-semibold">{name}</h1>
+          <button
+            onClick={startVideoCall}
+            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 focus:outline-none"
+          >
+            Start Video Call
+          </button>
+        </header>
+        <div className="h-96 overflow-y-auto p-4 space-y-4">
+        {messages.length === 0 ? (
+            <p className="text-center text-gray-500">No messages yet. Start the conversation!</p>
           ) : (
-            messages.map((msg) => (
+          messages.map((msg) => (
+            <div key={msg.id} className={`flex ${msg.sender === "Employer" ? "justify-end" : "justify-start"}`}>
               <div
-                key={msg.id}
-                className={`message mb-2 ${
-                  msg.sender === "employer" ? "text-blue-600" : "text-green-600"
+                className={`max-w-xs md:max-w-md lg:max-w-lg xl:max-w-xl rounded-lg p-3 ${
+                  msg.sender === "jobseeker"
+                    ? "bg-black text-white rounded-br-none"
+                    : "bg-blue-100 text-gray-800 rounded-bl-none"
                 }`}
               >
-                <strong>{msg.sender}:</strong> {msg.content}
+                {msg.content.startsWith("Join the video call:") ? (
+                  <button
+                    onClick={() => handleJoinCall(msg.content.split("roomID=")[1])}
+                    className="text-blue-500 underline"
+                  >
+                    Join Video Call
+                  </button>
+                ) : (
+                  <p>{msg.content}</p>
+                )}
               </div>
-            ))
-          )}
+            </div>
+          ))
+        )}
+          <div ref={messagesEndRef} />
         </div>
-
-        {/* Input Section for Sending Messages */}
-        <div className="mt-4">
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)} // Update message state on input change
-            className="w-full p-2 border border-gray-300 rounded-lg"
-            placeholder="Type your message..."
-          ></textarea>
-          <button
-            onClick={sendMessage} // Trigger sendMessage function on click
-            className="mt-2 bg-blue-500 text-white p-2 rounded-lg"
-          >
-            Send
-          </button>
+        <div className="bg-white p-4 shadow-lg">
+          <div className="flex items-center space-x-2">
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Type a message"
+              className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+              onKeyPress={(e) => e.key === "Enter" && sendMessage()}
+            />
+            <button
+              onClick={sendMessage}
+              className="bg-black text-white p-2 rounded-lg hover:bg-black focus:outline-none focus:ring-2 focus:ring-black"
+            >
+              Send
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  );
+  )
 }
+

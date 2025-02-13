@@ -121,7 +121,7 @@ export default function ApplicationList() {
   //   }
   // };
   
-  const handleChat = async (applicationId) => {
+  const handleChat = async (applicationId,name) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -140,7 +140,7 @@ export default function ApplicationList() {
   
       if (response.ok) {
         const chat = await response.json();
-        navigate(`/employer/chat/${chat.id}`); // Redirect to the chat page
+        navigate(`/employer/chat/${chat.id}`, { state: { name } }); // Redirect to the chat page
       } else {
         const error = await response.json();
         alert(`Error creating chat: ${error.message || "Unknown error occurred."}`);
@@ -322,7 +322,7 @@ export default function ApplicationList() {
   {(application.applicationStatus === "Interview" ||
     application.applicationStatus === "Selected") && (
     <button
-      onClick={() => handleChat(application.applicationId)}
+      onClick={() => handleChat(application.applicationId,application.name)}
       className="bg-green-500 text-white px-4 py-2 rounded-lg"
     >
       Chat

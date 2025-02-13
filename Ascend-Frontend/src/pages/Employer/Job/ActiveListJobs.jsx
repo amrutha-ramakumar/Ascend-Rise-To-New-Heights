@@ -322,6 +322,8 @@
 //   );
 // }
 
+
+// current one trying to change
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import Pagination from "../../../components/Pagination"
@@ -360,7 +362,7 @@ export default function ListJobs() {
     setError(null)
 
     try {
-      const response = await fetch(`${BASE_URL}/api/jobs/listjob?page=0&size=1000`, {
+      const response = await fetch(`${BASE_URL}/api/jobs/listactivejobs?page=0&size=1000`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

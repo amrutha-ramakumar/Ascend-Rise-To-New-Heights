@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.acend.config.JwtProvider;
 import com.acend.entity.Application;
+import com.acend.entity.Users;
 import com.acend.repository.ApplicaionRepository;
+import com.acend.repository.UserRepository;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -21,6 +23,8 @@ public class ChatController {
     private ApplicaionRepository applicationRepository;
     @Autowired 
     private MessageRepository messageRepository;
+    @Autowired 
+    private UserRepository userRepository;
     @Autowired
     private JwtProvider jwtProvider;
     @PostMapping
@@ -75,7 +79,6 @@ public class ChatController {
         if (messages.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-
         return ResponseEntity.ok(messages);
     }
 
@@ -83,16 +86,16 @@ public class ChatController {
     public ResponseEntity<Message> sendMessage(@PathVariable Long chatId, @RequestBody MessageRequest messageRequest,@RequestHeader("Authorization") String token) throws NotFoundException {
         String email = jwtProvider.getEmailFromToken(token);
     	Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new NotFoundException());
-
+        Users user=userRepository.findByEmail(email);
         Message message = new Message();
         message.setChatId(chat.getId());
-        message.setSender(email);
+        message.setName(user.getFirstName() + user.getLastName());
+        message.setSender(user.getRole().toString());
         message.setContent(messageRequest.getMessage());
         messageRepository.save(message);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
-
 
 
 }

@@ -1,6 +1,7 @@
 package com.acend.service.impl;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,8 @@ import com.acend.repository.SkillRepository;
 import com.acend.repository.UserRepository;
 import com.acend.service.JobService;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -95,14 +98,43 @@ public class JobServiceImpl implements JobService {
 		Users user = userRepository.findByEmail(email);
 		Employer employer = employerRepository.findByUser(user);
 		Page<Job> jobs = jobRepository.findAllByEmployer(employer, pageable);
-		return jobs.map(this::convertToDto);
+//		return jobs.map(this::convertToDto);
+	    LocalDate currentDate = LocalDate.now();
+
+		List<JobDto> activeJobs = jobs.getContent().stream()
+		        .filter(job -> job.getExpiryDate().toInstant()
+		                         .atZone(ZoneId.systemDefault())
+		                         .toLocalDate()
+		                         .isAfter(currentDate)) // Convert Date to LocalDate and filter
+		        .map(this::convertToDto)
+		        .collect(Collectors.toList());
+
+		    return new PageImpl<>(activeJobs, pageable, activeJobs.size());
+	}
+	
+	@Override
+	public Page<JobDto> listexpiredJob(String email, Pageable pageable) {
+		Users user = userRepository.findByEmail(email);
+		Employer employer = employerRepository.findByUser(user);
+		Page<Job> jobs = jobRepository.findAllByEmployer(employer, pageable);
+//		return jobs.map(this::convertToDto);
+	    LocalDate currentDate = LocalDate.now();
+
+		List<JobDto> activeJobs = jobs.getContent().stream()
+		        .filter(job -> job.getExpiryDate().toInstant()
+		                         .atZone(ZoneId.systemDefault())
+		                         .toLocalDate()
+		                         .isBefore(currentDate)) // Convert Date to LocalDate and filter
+		        .map(this::convertToDto)
+		        .collect(Collectors.toList());
+
+		    return new PageImpl<>(activeJobs, pageable, activeJobs.size());
 	}
 
 	@Override
 	public List<JobDto> getAllJobs(String email) {
 		Users currentUser = userRepository.findByEmail(email); // Make sure to adjust this query to match your user
 																// retrieval method
-
 		Jobseeker jobSeeker = jobseekerRepository.findByUser(currentUser);
 		List<Job> jobs = jobRepository.findAll();
 //		return jobs.stream().map(this::convertToDto).toList();
@@ -146,11 +178,11 @@ public class JobServiceImpl implements JobService {
 	}
 	
 	@Transactional
-	public Job verifyJob(Long jobId, boolean approved) {
+	public Job verifyJob(Long jobId) {
 	    Job job = jobRepository.findById(jobId)
 	            .orElseThrow(() -> new RuntimeException("Job not found"));
 	    
-	    job.setApproved(approved);
+	    job.setApproved(true);
 	    return jobRepository.save(job);
 	}
 	@Transactional
@@ -175,6 +207,14 @@ public class JobServiceImpl implements JobService {
 	    convertToJob(job, jobDTO, industry, employer);
 	    return jobRepository.save(job);
 	}
+	
+	
+	@Override
+	public Page<JobDto> getUnapprovedJobs(Pageable pageable) {
+		Page<Job> jobs = jobRepository.findByApproved(false,pageable);
+		return jobs.map(this::convertToDto);
+	}
+
 
 
 	private void convertToJob(Job job, JobDto jobDTO, Industry industry, Employer employer) {
@@ -188,7 +228,6 @@ public class JobServiceImpl implements JobService {
 	    job.setIndustry(industry);
 	    job.setEmployer(employer);
 	    job.setDeleted(jobDTO.isDeleted());
-
 	    if (jobDTO.getSkills() != null) {
 	        List<Skill> skills = jobDTO.getSkills().stream()
 	                .map(skillRepository::findBySkillName)
@@ -225,5 +264,6 @@ public class JobServiceImpl implements JobService {
 		return jobDto;
 	}
 
+	
 	
 }

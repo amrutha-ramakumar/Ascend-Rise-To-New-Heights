@@ -144,50 +144,50 @@ const OtpVerification = ({ email, onVerify }) => {
     }
   }
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault()
-  //   const otpString = otp.join('')
-  //   if (otpString.length === 6) {
-  //     onVerify(otpString)
-  //     setOtp(['', '', '', '', '', '']) // Reset OTP input fields
-  //     setError('') // Clear error on success
-  //   } else {
-  //     setError('Please enter a valid 6-digit OTP')
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const otpString = otp.join('')
+    if (otpString.length === 6) {
+      onVerify(otpString)
+      setOtp(['', '', '', '', '', '']) // Reset OTP input fields
+      setError('') // Clear error on success
+    } else {
+      setError('Please enter a valid 6-digit OTP')
+    }
+  }
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const otpString = otp.join('');
+  
+  //   if (otpString.length !== 6) {
+  //     setError('Please enter a valid 6-digit OTP');
+  //     return;
   //   }
-  // }
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const otpString = otp.join('');
+  //  console.log(otpString);
+  //   try {
+  //     const response = await fetch(`${BASE_URL}/auth/verify-otp`, {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({ email, otp: otpString }),
+  //     });
   
-    if (otpString.length !== 6) {
-      setError('Please enter a valid 6-digit OTP');
-      return;
-    }
+  //     const data = await response.json();
   
-    try {
-      const response = await fetch(`${BASE_URL}/auth/verify-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp: otpString }),
-      });
-  
-      const data = await response.json();
-  
-      if (!response.ok) {
-        setError(data.error || 'An unexpected error occurred. Please try again.');
-        setOtp(['', '', '', '', '', '']); // Reset OTP input on error
-        return;
-      }
-  
-      setError('');
-      setOtp(['', '', '', '', '', '']); // Reset OTP input on success
-      onVerify(otpString);
-    } catch (error) {
-      console.error('Error verifying OTP:', error);
-      setError('An unexpected error occurred. Please try again.');
-      setOtp(['', '', '', '', '', '']); // Reset OTP input on error
-    }
-  };
+  //     if (!response.ok) {
+  //       setError(data.error || 'An unexpected error occurred. Please try again.');
+  //       setOtp(['', '', '', '', '', '']); // Reset OTP input on error
+  //       return;
+  //     }
+      
+  //     setError('');
+  //     setOtp(['', '', '', '', '', '']); // Reset OTP input on success
+  //     onVerify(otpString);
+  //   } catch (error) {
+  //     console.error('Error verifying OTP:', error);
+  //     setError('An unexpected error occurred. Please try again.');
+  //     setOtp(['', '', '', '', '', '']); // Reset OTP input on error
+  //   }
+  // };
   
   // const handleResendOTP = async () => {
   //   try {

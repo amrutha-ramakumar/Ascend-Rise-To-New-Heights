@@ -15,7 +15,7 @@ public class ApplicationDetails {
     private String applicationStatus;
 
     private String resumePath; 
-
+    private Long UserId;
     private String additionalDetails;
     private String name;
     private String email;

@@ -25,7 +25,9 @@ import JobseekerDashboard from './pages/Jobseeker/JobseekerDashboard';
 import JobseekerDetailsForm from './pages/Jobseeker/JobseekerDetailsFrom';
 import EmployerDetailsForm from './pages/Employer/EmployerDetailsForm'
 import CreateJob from './pages/Employer/Job/CreateJob'
-import ListJobs from './pages/Employer/Job/ListJobs';
+import ListActiveJobs from './pages/Employer/Job/ActiveListJobs';
+import ListExpiredJobs from './pages/Employer/Job/ExpiredJobList';
+
 import ListAllJobs from './pages/Jobseeker/Job/ListAllJobs';
 import JobSeekerProfile from './pages/Jobseeker/Profile test/JobseekerProfile';
 import SavedJobs from './pages/Jobseeker/Job/SavedJobs';
@@ -41,12 +43,19 @@ import EmployerVerification from './pages/Admin/Users/EmployerVerification';
 import ChatPage from './pages/Employer/chat/ChatPage';
 import Chating from './pages/Jobseeker/Job/ChatPage'
 import EmployerDetails from './pages/Admin/Users/EmployerDetails';
+import VideoCall from './pages/Employer/chat/VideoCall';
+import UnapprovedJobsTable from './pages/Admin/Job/UnapprovedJobsTable';
+import JobVerification from './pages/Admin/Job/JobVerification';
+import { ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+// import Chat from './components/Chat';
 function App() {
   return (
     <AuthProvider>
       <Router>
         <div className="flex flex-col min-h-screen">
           <Navbar />
+          <ToastContainer />
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<Home />} />
@@ -76,7 +85,8 @@ function App() {
             
             <Route path="/employer/profile" element={<ProfileView />} /> 
             <Route path="/employer/application/:jobId" element={<ApplicationDetails />} />
-            <Route path="/employer/jobs" element={<ListJobs />} /> 
+            <Route path="/employer/jobs" element={<ListActiveJobs />} /> 
+            <Route path="/employer/expiredjobs" element={<ListExpiredJobs />} /> 
             <Route path="/edit" element={<EditProfile />} /> 
             <Route path="/employer/chat/:chatId" element={<ChatPage />} />
             <Route path="/chat/:chatId" element={<Chating />} />
@@ -86,12 +96,17 @@ function App() {
             <Route path="/employer/payment-success" element={<EmployerPaymentSuccess />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/jobseeker-list" element={<JobSeekersList />} />
-            
+            <Route path="/video-call" element={<VideoCall />} />
             <Route path="/admin/employer-list" element={<Employers />} />
             <Route path="/admin/employer-verification" element={<EmployerVerification />} />
             <Route path="/admin/employer-details/:empId" element={<EmployerDetails />} />
             <Route path="/admin/subscription-plans" element={<SubscriptionPlanList />} /> 
             <Route path="/admin/subscription-plans/new" element={<SubscriptionPlanForm />} />
+            <Route path="/admin/jobs" element={<UnapprovedJobsTable />} />
+            <Route path="/admin/verify/:id" element={<JobVerification />} />
+
+            {/* <Route path="/chats/:userRole" element={<Chat />} /> */}
+
             <Route path="/admin/subscription-plans/edit/:id" element={<SubscriptionPlanForm />} />
               </Route>
               <Route path="*" element={<Navigate to="/" replace />} />

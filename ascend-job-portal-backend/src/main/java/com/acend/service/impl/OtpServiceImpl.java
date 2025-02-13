@@ -38,7 +38,7 @@ public class OtpServiceImpl implements OtpService {
 
 			String otp = generateOTP();
 			user.setOtp(otp);
-			user.setOtpExpiryDate(LocalDateTime.now().plusMinutes(1));
+			user.setOtpExpiryDate(LocalDateTime.now().plusMinutes(2));
 			otpVerificationRepository.save(user);
 
 			emailService.sendOTPEmail(email, otp);

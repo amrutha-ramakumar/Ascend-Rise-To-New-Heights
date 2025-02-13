@@ -31,24 +31,6 @@ public class JobController {
 		this.jwtProvider = jwtProvider;
 	}
 
-//	@PostMapping
-//	public ResponseEntity<Job> createJob(@RequestBody JobDto jobDTO, @RequestHeader("Authorization") String token) {
-//		String email = jwtProvider.getEmailFromToken(token);
-//		Job savedJob = jobService.saveJob(jobDTO, email);
-//		return ResponseEntity.status(HttpStatus.CREATED).body(savedJob);
-//	}
-	
-//	@PostMapping
-//	public ResponseEntity<Job> createOrUpdateJob(
-//	        @RequestParam(required = false) Long jobId, 
-//	        @RequestBody JobDto jobDTO, 
-//	        @RequestHeader("Authorization") String token) {
-//
-//	    String email = jwtProvider.getEmailFromToken(token);
-//	    Job savedJob = jobService.saveOrUpdateJob(jobId, jobDTO, email);
-//	    return ResponseEntity.status(HttpStatus.CREATED).body(savedJob);
-//	}
-
 	@PostMapping
 	public ResponseEntity<?> createJob(
 	        @RequestBody JobDto jobDTO, 
@@ -75,14 +57,14 @@ public class JobController {
         return ResponseEntity.ok(job);
     }
 
-	@PatchMapping("/{jobId}/verify")
-	public ResponseEntity<Job> verifyJob(@PathVariable Long jobId, @RequestParam boolean approved) {
-	    Job verifiedJob = jobService.verifyJob(jobId, approved);
+	@PutMapping("/{jobId}/approve")
+	public ResponseEntity<Job> verifyJob(@PathVariable Long jobId) {
+	    Job verifiedJob = jobService.verifyJob(jobId);
 	    return ResponseEntity.ok(verifiedJob);
 	}
 
 
-	@GetMapping("/listjob")
+	@GetMapping("/listactivejobs")
 	public ResponseEntity<Page<JobDto>> listJob(@RequestHeader("Authorization") String jwt,
 			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 		Pageable pageable = PageRequest.of(page, size);
@@ -91,10 +73,27 @@ public class JobController {
 		return ResponseEntity.ok(jobs);
 	}
 
+	@GetMapping("/listexpiredjobs")
+	public ResponseEntity<Page<JobDto>> listExpiredJob(@RequestHeader("Authorization") String jwt,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		String email = jwtProvider.getEmailFromToken(jwt);
+		Page<JobDto> jobs = jobService.listexpiredJob(email, pageable);
+		return ResponseEntity.ok(jobs);
+	}
+	
 	@GetMapping("/listalljob")
 	public ResponseEntity<List<JobDto>> listJob(@RequestHeader("Authorization") String jwt) {
 		String email = jwtProvider.getEmailFromToken(jwt);
 		List<JobDto> jobs = jobService.getAllJobs(email);
+		return ResponseEntity.ok(jobs);
+	}
+	
+	@GetMapping("/getNotApproved")
+	public ResponseEntity<Page<JobDto>> unapprovedJobs(@RequestHeader("Authorization") String jwt,
+			@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+		Pageable pageable = PageRequest.of(page, size);
+		Page<JobDto> jobs = jobService.getUnapprovedJobs(pageable);
 		return ResponseEntity.ok(jobs);
 	}
 
