@@ -17,6 +17,7 @@ import com.razorpay.RazorpayClient;
 
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -90,5 +91,28 @@ public class PaymentService {
         subscription.setEndDate(payment.getPaymentDate().plus(subscription.getPlan().getDuration(), ChronoUnit.DAYS));
         subscriptionRepository.save(subscription);
         return payment;
+    }
+
+
+    public Double getYearlyIncome(int year) {
+        return paymentRepository.getTotalIncomeByYear(year);
+    }
+
+    public Map<Integer, Double> getMonthlyIncome(int year) {
+        List<Object[]> results = paymentRepository.getMonthlyIncomeByYear(year);
+        Map<Integer, Double> incomeMap = new HashMap<>();
+        for (Object[] row : results) {
+            incomeMap.put((Integer) row[0], (Double) row[1]);
+        }
+        return incomeMap;
+    }
+
+    public Map<Integer, Double> getDailyIncome(int year, int month) {
+        List<Object[]> results = paymentRepository.getDailyIncomeByMonth(year, month);
+        Map<Integer, Double> incomeMap = new HashMap<>();
+        for (Object[] row : results) {
+            incomeMap.put((Integer) row[0], (Double) row[1]);
+        }
+        return incomeMap;
     }
 }

@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import BASE_URL from "../../../api/BaseUrl";
 import Pagination from "../../../components/Pagination";
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../../../contexts/AuthContexts";
+
 export default function ApplicationList() {
   const { jobId } = useParams();
   const [applications, setApplications] = useState([]);
@@ -11,6 +13,8 @@ export default function ApplicationList() {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const applicationsPerPage = 10;
+    const {  userRole } = useAuth();
+  
   const navigate = useNavigate();
   useEffect(() => {
     fetchApplications();
@@ -121,7 +125,7 @@ export default function ApplicationList() {
   //   }
   // };
   
-  const handleChat = async (applicationId,name) => {
+  const handleChat = async (applicationId) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -140,8 +144,10 @@ export default function ApplicationList() {
   
       if (response.ok) {
         const chat = await response.json();
-        navigate(`/employer/chat/${chat.id}`, { state: { name } }); // Redirect to the chat page
-      } else {
+        // navigate(`/employer/chat/${chat.id}`, { state: { name } }); 
+        navigate(`/employer/chat/${chat.id}`, { 
+          state: { chatId: chat.id, userId:chat.employerId,receiverId:chat.jobseekerId, senderType:userRole  } 
+        });       } else {
         const error = await response.json();
         alert(`Error creating chat: ${error.message || "Unknown error occurred."}`);
       }

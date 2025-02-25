@@ -166,9 +166,22 @@ public class JobServiceImpl implements JobService {
 	    Job job = new Job();
 
 	    // Check for duplicate job only during creation
-	    if ( jobRepository.existsByPositionAndLocationAndExpiryDate(
-	            jobDTO.getPosition(), jobDTO.getLocation(), jobDTO.getExpiryDate())) {
-	        throw new RuntimeException("Duplicate job found with same position, location, and expiry date.");
+//	    if ( jobRepository.existsByPositionAndLocationAndExpiryDate(
+//	            jobDTO.getPosition(), jobDTO.getLocation(), jobDTO.getExpiryDate())) {
+//	        throw new RuntimeException("Duplicate job found with same position, location, and expiry date.");
+//	    }
+	    if (jobRepository.existsByPositionAndLocationAndEmployerAndExperienceAndEducationAndIndustryAndSalaryAndDescription(
+	            jobDTO.getPosition(),
+	            jobDTO.getLocation(),
+	            employer,
+	            jobDTO.getExperience(),
+	            jobDTO.getEducation(),
+	            industry,
+	            jobDTO.getSalary(),
+//	            jobDTO.getSkills(),
+	            jobDTO.getDescription()
+	    )) {
+	        throw new RuntimeException("Duplicate job found.");
 	    }
 
 	    // Convert DTO to Job entity
@@ -211,7 +224,9 @@ public class JobServiceImpl implements JobService {
 	
 	@Override
 	public Page<JobDto> getUnapprovedJobs(Pageable pageable) {
-		Page<Job> jobs = jobRepository.findByApproved(false,pageable);
+//		Page<Job> jobs = jobRepository.findByApproved(false,pageable);
+		Page<Job> jobs = jobRepository.findByApprovedFalseAndExpiryDateAfterOrExpiryDateIsNull(
+		        new Date(), pageable);
 		return jobs.map(this::convertToDto);
 	}
 

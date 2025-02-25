@@ -150,7 +150,7 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="min-h-screen mt-14 bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen mt-14 bg-gray-50 flex items-center justify-center px-4"> 
       <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900">Complete Your Subscription</h1>

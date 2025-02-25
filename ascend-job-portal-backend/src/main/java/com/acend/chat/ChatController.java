@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.acend.chattry.ChatMessagesRepository;
 import com.acend.config.JwtProvider;
 import com.acend.entity.Application;
 import com.acend.entity.Users;
@@ -23,6 +24,8 @@ public class ChatController {
     private ApplicaionRepository applicationRepository;
     @Autowired 
     private MessageRepository messageRepository;
+    @Autowired 
+    private ChatMessagesRepository chatMessagesRepository;
     @Autowired 
     private UserRepository userRepository;
     @Autowired
@@ -62,41 +65,18 @@ public class ChatController {
     }
 
     
-//    @GetMapping("/{chatId}/messages")
-//    public ResponseEntity<?> getMessages(@PathVariable Long chatId,@RequestHeader("Authorization") String token) {
-//        List<Message> messages = messageRepository.findMessagesByChatIdOrdered(chatId);
-//        if(messages.isEmpty()) {
-//        	return ResponseEntity.ok("No previous message exist");
-//        }
-//        return ResponseEntity.ok(messages);
-//    }
-    @GetMapping("/{chatId}/messages")
+    
+    @GetMapping("/{chatId}")
     public ResponseEntity<?> getMessages(
             @PathVariable Long chatId,
             @RequestHeader("Authorization") String token) {
-        List<Message> messages = messageRepository.findMessagesByChatIdOrdered(chatId);
+        List<com.acend.chattry.ChatMessage> messages = chatMessagesRepository.findByChatId(chatId);
 
         if (messages.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         return ResponseEntity.ok(messages);
     }
-
-    @PostMapping("/{chatId}/messages")
-    public ResponseEntity<Message> sendMessage(@PathVariable Long chatId, @RequestBody MessageRequest messageRequest,@RequestHeader("Authorization") String token) throws NotFoundException {
-        String email = jwtProvider.getEmailFromToken(token);
-    	Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new NotFoundException());
-        Users user=userRepository.findByEmail(email);
-        Message message = new Message();
-        message.setChatId(chat.getId());
-        message.setName(user.getFirstName() + user.getLastName());
-        message.setSender(user.getRole().toString());
-        message.setContent(messageRequest.getMessage());
-        messageRepository.save(message);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(message);
-    }
-
 
 }
 

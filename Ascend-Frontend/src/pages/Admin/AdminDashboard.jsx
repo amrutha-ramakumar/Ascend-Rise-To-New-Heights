@@ -128,12 +128,16 @@
 import { useState, useEffect } from "react"
 import PropTypes from "prop-types"
 import BASE_URL from "../../api/BaseUrl"
-
+import IncomeChart from "./IncomeChart"
 const AdminDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
-
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
+  const [type, setType] = useState("monthly");
+  const [year, setYear] = useState(currentYear);
+  const [month, setMonth] = useState(currentMonth);
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
@@ -214,6 +218,26 @@ const AdminDashboard = () => {
           <div>No data available</div>
         )}
       </div>
+      <div>
+        <label>Chart Type:</label>
+        <select value={type} onChange={(e) => setType(e.target.value)}>
+          {/* <option value="yearly">Yearly</option> */}
+          <option value="monthly">Monthly</option>
+          <option value="daily">Daily</option>
+        </select>
+
+        <label>Year:</label>
+        <input type="number" value={year} onChange={(e) => setYear(e.target.value)} />
+
+        {type === "daily" && (
+          <>
+            <label>Month:</label>
+            <input type="number" value={month} onChange={(e) => setMonth(e.target.value)} />
+          </>
+        )}
+      </div>
+
+      <IncomeChart type={type} year={year} month={month} />
     </div>
   )
 }
@@ -225,6 +249,7 @@ const DashboardCard = ({ title, value, icon }) => (
       <h2 className="text-lg font-semibold">{title}</h2>
       <p className="text-3xl font-bold">{value}</p>
     </div>
+    
   </div>
 )
 

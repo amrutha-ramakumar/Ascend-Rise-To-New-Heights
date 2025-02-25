@@ -7,10 +7,11 @@ import com.acend.request.OrderRequest;
 import com.acend.request.PaymentRequest;
 import com.acend.service.impl.PaymentService;
 
+import java.util.Map;
+
 import org.springframework.http.MediaType;
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
 public class PaymentController {
     private final PaymentService paymentService;
 
@@ -31,5 +32,20 @@ public class PaymentController {
                                        @RequestBody PaymentRequest request) {
     	String email = jwtProvider.getEmailFromToken(token);
         return ResponseEntity.ok(paymentService.savePayment(email, request));
+    }
+    
+    @GetMapping("/yearly")
+    public Double getYearlyIncome(@RequestHeader("Authorization") String token, @RequestParam int year) {
+        return paymentService.getYearlyIncome(year);
+    }
+
+    @GetMapping("/monthly")
+    public Map<Integer, Double> getMonthlyIncome(@RequestHeader("Authorization") String token, @RequestParam int year) {
+        return paymentService.getMonthlyIncome(year);
+    }
+
+    @GetMapping("/daily")
+    public Map<Integer, Double> getDailyIncome(@RequestHeader("Authorization") String token, @RequestParam int year, @RequestParam int month) {
+        return paymentService.getDailyIncome(year, month);
     }
 }

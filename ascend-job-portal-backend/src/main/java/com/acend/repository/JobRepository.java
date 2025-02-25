@@ -10,7 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.acend.entity.Employer;
+import com.acend.entity.Industry;
 import com.acend.entity.Job;
+import com.acend.entity.Skill;
 
 @Repository
 public interface JobRepository extends JpaRepository<Job, Long>{
@@ -24,7 +26,11 @@ public interface JobRepository extends JpaRepository<Job, Long>{
 	List<Job> findByApproved(boolean approved);
 
 	boolean existsByPositionAndLocationAndExpiryDate(String position, String location, Date expiryDate);
-
+	boolean existsByPositionAndLocationAndEmployerAndExperienceAndEducationAndIndustryAndSalaryAndDescription(
+	        String position, String location, Employer employer, String experience, 
+	        String education, Industry industry, String salary,  String description);
 	boolean existsByPositionAndLocationAndExpiryDateAndIdNot(String position, String location, Date expiryDate,
 			Long jobId);
+
+	Page<Job> findByApprovedFalseAndExpiryDateAfterOrExpiryDateIsNull(Date date, Pageable pageable);
 }

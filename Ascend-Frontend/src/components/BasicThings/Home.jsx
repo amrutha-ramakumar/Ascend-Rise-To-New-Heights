@@ -1,20 +1,422 @@
+// import { useState, useEffect } from "react";
+// import { Link, useNavigate } from "react-router-dom";
+// import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+// import BASE_URL from "../../api/BaseUrl";
+
+// export default function Home() {
+//   const navigate = useNavigate();
+//   const [industries, setIndustries] = useState([]);
+//   const [currentIndustryIndex, setCurrentIndustryIndex] = useState(0);
+//   const [searchData, setSearchData] = useState({
+//     skills: "",
+//     designation: "",
+//     company: "",
+//     experience: "0-2",
+//     location: "",
+//   });
+//   const [isLoading, setIsLoading] = useState(false);
+
+//   useEffect(() => {
+//     const fetchIndustries = async () => {
+//       try {
+//         const response = await fetch(`${BASE_URL}/industry`);
+//         const data = await response.json();
+//         setIndustries(data);
+//       } catch (error) {
+//         console.error("Failed to fetch industries:", error);
+//       }
+//     };
+
+//     fetchIndustries();
+//   }, []);
+
+//   const handleSearch = async (e) => {
+//     e.preventDefault();
+//     setIsLoading(true);
+//     try {
+//       const response = await fetch(`${BASE_URL}/jobs/search`, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify(searchData),
+//       });
+
+//       if (response.ok) {
+//         const data = await response.json();
+//         // Navigate to search results page with the data
+//         navigate("/search-results", { state: { results: data } });
+//       } else {
+//         console.error("Search failed");
+//       }
+//     } catch (error) {
+//       console.error("Search error:", error);
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };
+
+//   const experienceOptions = [
+//     { value: "0-2", label: "0-2 Years" },
+//     { value: "2-5", label: "2-5 Years" },
+//     { value: "5-8", label: "5-8 Years" },
+//     { value: "8+", label: "8+ Years" },
+//   ];
+
+//   const handlePrevIndustries = () => {
+//     setCurrentIndustryIndex((prev) => Math.max(0, prev - 3));
+//   };
+
+//   const handleNextIndustries = () => {
+//     setCurrentIndustryIndex((prev) =>
+//       Math.min(industries.length - 3, prev + 3)
+//     );
+//   };
+
+//   return (
+//     <div className="min-h-screen">
+//       {/* Hero Section */}
+//       <section className="bg-gray-50 py-24 mt-8 shadow-md">
+//         <div className="container mx-auto px-4">
+//           <div className="text-center mb-16">
+//             <h1 className="text-4xl font-bold mb-4">Find Your Dream Job Now</h1>
+//             <p className="text-xl text-gray-600">Rise To New Heights</p>
+//           </div>
+
+//           {/* Search Form */}
+//           <form onSubmit={handleSearch} className="max-w-5xl mx-auto">
+//             <div className="flex items-center bg-white rounded-full shadow-lg p-2">
+//               <div className="flex items-center flex-1 min-w-0">
+//                 <Search className="h-5 w-5 text-gray-400 ml-3" />
+//                 <div className="flex-1 flex">
+//                   <input
+//                     type="text"
+//                     placeholder="Skills"
+//                     className="flex-1 px-3 py-2 text-gray-700 focus:outline-none"
+//                     value={searchData.skills}
+//                     onChange={(e) =>
+//                       setSearchData({ ...searchData, skills: e.target.value })
+//                     }
+//                   />
+//                   <input
+//                     type="text"
+//                     placeholder="Designation"
+//                     className="flex-1 px-3 py-2 text-gray-700 focus:outline-none"
+//                     value={searchData.designation}
+//                     onChange={(e) =>
+//                       setSearchData({
+//                         ...searchData,
+//                         designation: e.target.value,
+//                       })
+//                     }
+//                   />
+//                   <input
+//                     type="text"
+//                     placeholder="Company"
+//                     className="flex-1 px-3 py-2 text-gray-700 focus:outline-none"
+//                     value={searchData.company}
+//                     onChange={(e) =>
+//                       setSearchData({ ...searchData, company: e.target.value })
+//                     }
+//                   />
+//                 </div>
+//               </div>
+//               <div className="h-6 w-px bg-gray-300 mx-2" />
+//               <div className="relative min-w-[180px]">
+//                 <select
+//                   className="w-full px-3 py-2 appearance-none focus:outline-none text-gray-700"
+//                   value={searchData.experience}
+//                   onChange={(e) =>
+//                     setSearchData({ ...searchData, experience: e.target.value })
+//                   }
+//                 >
+//                   <option value="" disabled>
+//                     SELECT EXPERIENCE
+//                   </option>
+//                   {experienceOptions.map((option) => (
+//                     <option key={option.value} value={option.value}>
+//                       {option.label}
+//                     </option>
+//                   ))}
+//                 </select>
+//                 <ChevronRight className="h-4 w-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 transform rotate-90" />
+//               </div>
+//               <div className="h-6 w-px bg-gray-300 mx-2" />
+//               <input
+//                 type="text"
+//                 placeholder="LOCATION"
+//                 className="px-3 py-2 min-w-[150px] text-gray-700 focus:outline-none"
+//                 value={searchData.location}
+//                 onChange={(e) =>
+//                   setSearchData({ ...searchData, location: e.target.value })
+//                 }
+//               />
+//               <button
+//                 type="submit"
+//                 disabled={isLoading}
+//                 className="ml-2 px-8 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition-colors disabled:bg-gray-400"
+//               >
+//                 {isLoading ? "Searching..." : "SEARCH"}
+//               </button>
+//             </div>
+//           </form>
+
+//           {/* </div> */}
+//         </div>
+//       </section>
+
+//       {/* Companies Section */}
+//       <section className="py-16">
+//         <div className="container mx-auto px-4">
+//           {/* Industry Categories Section */}
+//           <div className="flex items-center justify-between mb-6">
+//             <h3 className="text-2xl font-bold text-gray-800">
+//               Popular Industries
+//             </h3>
+//             <p className="text-sm text-gray-500">
+//               Explore job opportunities by industry
+//             </p>
+//           </div>
+
+//           {/* Navigation Buttons */}
+//           <div className="flex  justify-between mb-4">
+//             {/* Previous Button */}
+//             <button
+//               onClick={handlePrevIndustries}
+//               disabled={currentIndustryIndex === 0}
+//               className="p-2 bg-white rounded-full shadow-md disabled:opacity-50 hover:bg-gray-50 transition-all"
+//             >
+//               <ChevronLeft className="w-5 h-5" />
+//             </button>
+
+//             {/* Next Button */}
+//             <button
+//               onClick={handleNextIndustries}
+//               disabled={currentIndustryIndex >= industries.length - 6}
+//               className="p-2 bg-white rounded-full shadow-md disabled:opacity-50 hover:bg-gray-50 transition-all"
+//             >
+//               <ChevronRight className="w-5 h-5" />
+//             </button>
+//           </div>
+
+//           {/* Vertical Cards with Zoom Effect */}
+//           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+//             {industries
+//               .slice(currentIndustryIndex, currentIndustryIndex + 6)
+//               .map((industry) => (
+//                 <Link
+//                   key={industry.id}
+//                   to={`/jobs/${industry.slug}`}
+//                   className="group relative bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+//                 >
+//                   <div className="p-6 flex flex-col items-center text-center">
+//                     {/* Icon */}
+//                     <span className="p-4 bg-blue-100 rounded-full mb-4">
+//                       <svg
+//                         className="h-10 w-10 text-blue-600"
+//                         fill="none"
+//                         stroke="currentColor"
+//                         viewBox="0 0 24 24"
+//                       >
+//                         <path
+//                           strokeLinecap="round"
+//                           strokeLinejoin="round"
+//                           strokeWidth={2}
+//                           d={
+//                             industry.icon ||
+//                             "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+//                           }
+//                         />
+//                       </svg>
+//                     </span>
+
+//                     {/* Industry Name */}
+//                     <h4 className="text-lg font-semibold text-gray-800 mb-2 group-hover:text-blue-600">
+//                       {industry.industryType}
+//                     </h4>
+
+//                     {/* Description */}
+//                     <p className="text-sm text-gray-600">
+//                       Explore job roles in {industry.industryType}
+//                     </p>
+//                   </div>
+
+//                   {/* Hover Effect Overlay */}
+//                   <div className="absolute inset-0 bg-blue-50 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+//                 </Link>
+//               ))}
+//           </div>
+//         </div>
+//         {/* </div> */}
+//       </section>
+
+//       {/* Discover Section */}
+//       <section className="bg-gray-50 py-16 shadow-inner">
+//         <div className="container mx-auto px-4">
+//           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+//             <div className="max-w-lg">
+//               <h2 className="text-4xl font-bold mb-4">
+//                 Discover jobs across popular roles
+//               </h2>
+//               <p className="text-lg text-gray-600">
+//                 Find the perfect position for your next career move.
+//               </p>
+//               <p className="mt-4 text-gray-700">
+//                 <strong>For Employers:</strong> Our platform offers a seamless
+//                 way to connect with top talent across various industries,
+//                 ensuring you find the right candidates for your job openings.
+//               </p>
+//               <p className="mt-2 text-gray-700">
+//                 <strong>For Developers and Job Seekers:</strong> Whether
+//                 you&apos;re a fresher or an experienced professional, explore a
+//                 wide range of job opportunities tailored to your skills,
+//                 experience, and aspirations.
+//               </p>
+//             </div>
+//             <div className="w-full md:w-1/3">
+//               <img
+//                 src="/src/assets/JobSearch.png"
+//                 alt="Job search illustration"
+//                 className="w-full h-auto"
+//               />
+//             </div>
+//           </div>
+//         </div>
+//       </section>
+//     </div>
+//   );
+// }
+
+
+// import { useState, useEffect } from "react";
+// import { Link } from "react-router-dom";
+// import { ChevronLeft, ChevronRight } from "lucide-react";
+// import BASE_URL from "../../api/BaseUrl";
+
+// export default function Home() {
+//   // const navigate = useNavigate();
+//   const [industries, setIndustries] = useState([]);
+//   const [currentIndustryIndex, setCurrentIndustryIndex] = useState(0);
+
+//   useEffect(() => {
+//     const fetchIndustries = async () => {
+//       try {
+//         const response = await fetch(`${BASE_URL}/industry`);
+//         const data = await response.json();
+//         setIndustries(data);
+//       } catch (error) {
+//         console.error("Failed to fetch industries:", error);
+//       }
+//     };
+
+//     fetchIndustries();
+//   }, []);
+
+//   const handlePrevIndustries = () => {
+//     setCurrentIndustryIndex((prev) => Math.max(0, prev - 3));
+//   };
+
+//   const handleNextIndustries = () => {
+//     setCurrentIndustryIndex((prev) =>
+//       Math.min(industries.length - 3, prev + 3)
+//     );
+//   };
+
+//   return (
+//     <div className="min-h-screen">
+//       {/* Hero Section */}
+//       <section className="bg-gray-50 py-24 mt-8 shadow-md">
+//         <div className="container mx-auto px-4">
+//           <div className="text-center mb-16">
+//             <h1 className="text-4xl font-bold mb-4">Find Your Dream Job Now</h1>
+//             <p className="text-xl text-gray-600">Rise To New Heights</p>
+//           </div>
+//         </div>
+//       </section>
+
+//       {/* Companies Section */}
+//       <section className="py-16">
+//         <div className="container mx-auto px-4">
+//           {/* Industry Categories Section */}
+//           <div className="flex items-center justify-between mb-6">
+//             <h3 className="text-2xl font-bold text-gray-800">Popular Industries</h3>
+//             <p className="text-sm text-gray-500">Explore job opportunities by industry</p>
+//           </div>
+
+//           {/* Navigation Buttons */}
+//           <div className="flex justify-between mb-4">
+//             {/* Previous Button */}
+//             <button
+//               onClick={handlePrevIndustries}
+//               disabled={currentIndustryIndex === 0}
+//               className="p-2 bg-white rounded-full shadow-md disabled:opacity-50 hover:bg-gray-50 transition-all"
+//             >
+//               <ChevronLeft className="w-5 h-5" />
+//             </button>
+
+//             {/* Next Button */}
+//             <button
+//               onClick={handleNextIndustries}
+//               disabled={currentIndustryIndex >= industries.length - 6}
+//               className="p-2 bg-white rounded-full shadow-md disabled:opacity-50 hover:bg-gray-50 transition-all"
+//             >
+//               <ChevronRight className="w-5 h-5" />
+//             </button>
+//           </div>
+
+//           {/* Industry Cards */}
+//           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+//             {industries
+//               .slice(currentIndustryIndex, currentIndustryIndex + 6)
+//               .map((industry) => (
+//                 <Link
+//                   key={industry.id}
+//                   to={`/jobs/${industry.slug}`}
+//                   className="group relative bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+//                 >
+//                   <div className="p-6 flex flex-col items-center text-center">
+//                     <span className="p-4 bg-blue-100 rounded-full mb-4">
+//                       <svg
+//                         className="h-10 w-10 text-blue-600"
+//                         fill="none"
+//                         stroke="currentColor"
+//                         viewBox="0 0 24 24"
+//                       >
+//                         <path
+//                           strokeLinecap="round"
+//                           strokeLinejoin="round"
+//                           strokeWidth={2}
+//                           d={
+//                             industry.icon ||
+//                             "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+//                           }
+//                         />
+//                       </svg>
+//                     </span>
+//                     <h4 className="text-lg font-semibold text-gray-800 mb-2 group-hover:text-blue-600">
+//                       {industry.industryType}
+//                     </h4>
+//                     <p className="text-sm text-gray-600">
+//                       Explore job roles in {industry.industryType}
+//                     </p>
+//                   </div>
+//                 </Link>
+//               ))}
+//           </div>
+//         </div>
+//       </section>
+//     </div>
+//   );
+// }
+
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import BASE_URL from "../../api/BaseUrl";
 
 export default function Home() {
-  const navigate = useNavigate();
   const [industries, setIndustries] = useState([]);
   const [currentIndustryIndex, setCurrentIndustryIndex] = useState(0);
-  const [searchData, setSearchData] = useState({
-    skills: "",
-    designation: "",
-    company: "",
-    experience: "0-2",
-    location: "",
-  });
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchIndustries = async () => {
@@ -26,42 +428,8 @@ export default function Home() {
         console.error("Failed to fetch industries:", error);
       }
     };
-
     fetchIndustries();
   }, []);
-
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      const response = await fetch(`${BASE_URL}/jobs/search`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(searchData),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        // Navigate to search results page with the data
-        navigate("/search-results", { state: { results: data } });
-      } else {
-        console.error("Search failed");
-      }
-    } catch (error) {
-      console.error("Search error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const experienceOptions = [
-    { value: "0-2", label: "0-2 Years" },
-    { value: "2-5", label: "2-5 Years" },
-    { value: "5-8", label: "5-8 Years" },
-    { value: "8+", label: "8+ Years" },
-  ];
 
   const handlePrevIndustries = () => {
     setCurrentIndustryIndex((prev) => Math.max(0, prev - 3));
@@ -74,132 +442,45 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gray-50 py-24 mt-8 shadow-md">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h1 className="text-4xl font-bold mb-4">Find Your Dream Job Now</h1>
-            <p className="text-xl text-gray-600">Rise To New Heights</p>
-          </div>
-
-          {/* Search Form */}
-          <form onSubmit={handleSearch} className="max-w-5xl mx-auto">
-            <div className="flex items-center bg-white rounded-full shadow-lg p-2">
-              <div className="flex items-center flex-1 min-w-0">
-                <Search className="h-5 w-5 text-gray-400 ml-3" />
-                <div className="flex-1 flex">
-                  <input
-                    type="text"
-                    placeholder="Skills"
-                    className="flex-1 px-3 py-2 text-gray-700 focus:outline-none"
-                    value={searchData.skills}
-                    onChange={(e) =>
-                      setSearchData({ ...searchData, skills: e.target.value })
-                    }
-                  />
-                  <input
-                    type="text"
-                    placeholder="Designation"
-                    className="flex-1 px-3 py-2 text-gray-700 focus:outline-none"
-                    value={searchData.designation}
-                    onChange={(e) =>
-                      setSearchData({
-                        ...searchData,
-                        designation: e.target.value,
-                      })
-                    }
-                  />
-                  <input
-                    type="text"
-                    placeholder="Company"
-                    className="flex-1 px-3 py-2 text-gray-700 focus:outline-none"
-                    value={searchData.company}
-                    onChange={(e) =>
-                      setSearchData({ ...searchData, company: e.target.value })
-                    }
-                  />
-                </div>
-              </div>
-              <div className="h-6 w-px bg-gray-300 mx-2" />
-              <div className="relative min-w-[180px]">
-                <select
-                  className="w-full px-3 py-2 appearance-none focus:outline-none text-gray-700"
-                  value={searchData.experience}
-                  onChange={(e) =>
-                    setSearchData({ ...searchData, experience: e.target.value })
-                  }
-                >
-                  <option value="" disabled>
-                    SELECT EXPERIENCE
-                  </option>
-                  {experienceOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronRight className="h-4 w-4 text-gray-400 absolute right-3 top-1/2 -translate-y-1/2 transform rotate-90" />
-              </div>
-              <div className="h-6 w-px bg-gray-300 mx-2" />
-              <input
-                type="text"
-                placeholder="LOCATION"
-                className="px-3 py-2 min-w-[150px] text-gray-700 focus:outline-none"
-                value={searchData.location}
-                onChange={(e) =>
-                  setSearchData({ ...searchData, location: e.target.value })
-                }
-              />
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="ml-2 px-8 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition-colors disabled:bg-gray-400"
-              >
-                {isLoading ? "Searching..." : "SEARCH"}
-              </button>
-            </div>
-          </form>
-
-          {/* </div> */}
+      <section className="bg-gradient-to-r py-24 shadow-lg">
+        <div className="container mx-auto text-center text-black">
+          <h1 className="text-5xl font-bold mb-4">Find Your Dream Job</h1>
+          <p className="text-lg text-black">
+            Browse industries and explore new career opportunities.
+          </p>
         </div>
       </section>
 
-      {/* Companies Section */}
+      {/* Industries Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          {/* Industry Categories Section */}
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-bold text-gray-800">
-              Popular Industries
-            </h3>
-            <p className="text-sm text-gray-500">
-              Explore job opportunities by industry
-            </p>
+          {/* Header */}
+          <div className="flex justify-between items-center mb-6">
+            <h3 className="text-3xl font-bold text-gray-800">Popular Industries</h3>
           </div>
 
-          {/* Navigation Buttons */}
-          <div className="flex  justify-between mb-4">
-            {/* Previous Button */}
+          {/* Industry Navigation Buttons */}
+          <div className="flex justify-between items-center mb-6">
             <button
               onClick={handlePrevIndustries}
               disabled={currentIndustryIndex === 0}
-              className="p-2 bg-white rounded-full shadow-md disabled:opacity-50 hover:bg-gray-50 transition-all"
+              className="p-3 bg-white shadow-md rounded-full disabled:opacity-50 hover:bg-gray-100 transition-all"
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-6 h-6 text-gray-600" />
             </button>
 
-            {/* Next Button */}
             <button
               onClick={handleNextIndustries}
               disabled={currentIndustryIndex >= industries.length - 6}
-              className="p-2 bg-white rounded-full shadow-md disabled:opacity-50 hover:bg-gray-50 transition-all"
+              className="p-3 bg-white shadow-md rounded-full disabled:opacity-50 hover:bg-gray-100 transition-all"
             >
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight className="w-6 h-6 text-gray-600" />
             </button>
           </div>
 
-          {/* Vertical Cards with Zoom Effect */}
+          {/* Industry Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {industries
               .slice(currentIndustryIndex, currentIndustryIndex + 6)
@@ -210,7 +491,7 @@ export default function Home() {
                   className="group relative bg-white shadow-md rounded-lg overflow-hidden hover:shadow-lg transform hover:scale-105 transition-all duration-300"
                 >
                   <div className="p-6 flex flex-col items-center text-center">
-                    {/* Icon */}
+                    {/* Industry Icon */}
                     <span className="p-4 bg-blue-100 rounded-full mb-4">
                       <svg
                         className="h-10 w-10 text-blue-600"
@@ -235,51 +516,16 @@ export default function Home() {
                       {industry.industryType}
                     </h4>
 
-                    {/* Description */}
+                    {/* Industry Description */}
                     <p className="text-sm text-gray-600">
                       Explore job roles in {industry.industryType}
                     </p>
                   </div>
 
-                  {/* Hover Effect Overlay */}
-                  <div className="absolute inset-0 bg-blue-50 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-blue-50 opacity-0 group-hover:opacity-20 transition-all"></div>
                 </Link>
               ))}
-          </div>
-        </div>
-        {/* </div> */}
-      </section>
-
-      {/* Discover Section */}
-      <section className="bg-gray-50 py-16 shadow-inner">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="max-w-lg">
-              <h2 className="text-4xl font-bold mb-4">
-                Discover jobs across popular roles
-              </h2>
-              <p className="text-lg text-gray-600">
-                Find the perfect position for your next career move.
-              </p>
-              <p className="mt-4 text-gray-700">
-                <strong>For Employers:</strong> Our platform offers a seamless
-                way to connect with top talent across various industries,
-                ensuring you find the right candidates for your job openings.
-              </p>
-              <p className="mt-2 text-gray-700">
-                <strong>For Developers and Job Seekers:</strong> Whether
-                you&apos;re a fresher or an experienced professional, explore a
-                wide range of job opportunities tailored to your skills,
-                experience, and aspirations.
-              </p>
-            </div>
-            <div className="w-full md:w-1/3">
-              <img
-                src="/src/assets/JobSearch.png"
-                alt="Job search illustration"
-                className="w-full h-auto"
-              />
-            </div>
           </div>
         </div>
       </section>

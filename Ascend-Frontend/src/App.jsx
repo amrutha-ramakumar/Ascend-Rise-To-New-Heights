@@ -46,8 +46,6 @@ import EmployerDetails from './pages/Admin/Users/EmployerDetails';
 import VideoCall from './pages/Employer/chat/VideoCall';
 import UnapprovedJobsTable from './pages/Admin/Job/UnapprovedJobsTable';
 import JobVerification from './pages/Admin/Job/JobVerification';
-import { ToastContainer } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
 // import Chat from './components/Chat';
 function App() {
   return (
@@ -55,7 +53,6 @@ function App() {
       <Router>
         <div className="flex flex-col min-h-screen">
           <Navbar />
-          <ToastContainer />
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<Home />} />
