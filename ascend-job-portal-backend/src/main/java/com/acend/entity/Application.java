@@ -30,5 +30,6 @@ public class Application {
     private String resumePath; 
 
     @Lob
+    @Column(columnDefinition = "TEXT")
     private String additionalDetails; 
 }

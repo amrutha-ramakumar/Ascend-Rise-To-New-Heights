@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-
+import BASE_URL from '../../../../api/BaseUrl.js';
 const ExperienceForm = ({ experience, onClose }) => {
   const [formData, setFormData] = useState(
     experience || {
@@ -27,8 +27,8 @@ const ExperienceForm = ({ experience, onClose }) => {
 
     try {
       const url = experience
-        ? `http://localhost:8080/api/experience/${experience.id}`
-        : 'http://localhost:8080/api/experience';
+        ? `${BASE_URL}/api/experience/${experience.id}`
+        : `${BASE_URL}/api/experience`;
       const method = experience ? 'PUT' : 'POST';
 
       const response = await fetch(url, {

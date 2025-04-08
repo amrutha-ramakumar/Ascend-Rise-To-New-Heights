@@ -48,4 +48,5 @@ public class ChatMessage {
     private String fileUrl;  // For file sharing (new)
     private String fileType;  // For file sharing (new)
     private LocalDateTime timestamp;
+    private boolean isRead;
 }

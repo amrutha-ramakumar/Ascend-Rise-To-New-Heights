@@ -46,6 +46,7 @@ import EmployerDetails from './pages/Admin/Users/EmployerDetails';
 import VideoCall from './pages/Employer/chat/VideoCall';
 import UnapprovedJobsTable from './pages/Admin/Job/UnapprovedJobsTable';
 import JobVerification from './pages/Admin/Job/JobVerification';
+import ChatNotifications from './components/ChatNotifications';
 // import Chat from './components/Chat';
 function App() {
   return (
@@ -101,7 +102,7 @@ function App() {
             <Route path="/admin/subscription-plans/new" element={<SubscriptionPlanForm />} />
             <Route path="/admin/jobs" element={<UnapprovedJobsTable />} />
             <Route path="/admin/verify/:id" element={<JobVerification />} />
-
+            <Route path="/notification" element={<ChatNotifications />} />
             {/* <Route path="/chats/:userRole" element={<Chat />} /> */}
 
             <Route path="/admin/subscription-plans/edit/:id" element={<SubscriptionPlanForm />} />

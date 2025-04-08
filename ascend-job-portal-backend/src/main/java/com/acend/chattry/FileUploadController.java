@@ -42,19 +42,34 @@ package com.acend.chattry;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.acend.config.JwtProvider;
+import com.acend.entity.Users;
+import com.acend.repository.UserRepository;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/files")
 public class FileUploadController {
-
+	@Autowired 
+    private ChatMessagesRepository chatMessagesRepository;
+	@Autowired
+    private JwtProvider jwtProvider;
+    @Autowired 
+    private UserRepository userRepository;
     private static final String UPLOAD_DIR = "src/main/resources/static/media/";
     private static final String FILE_URL_PREFIX = "http://localhost:8080/media/"; // Update this with your actual server URL
+//    private static final String FILE_URL_PREFIX = "https://amrutharamakumar.online/media/"; // Update this with your actual server URL
 
+    
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
@@ -77,5 +92,29 @@ public class FileUploadController {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file");
         }
+    }
+    @PostMapping("/mark-read")
+    public ResponseEntity<?> markMessagesAsRead(@RequestHeader("Authorization") String token,@RequestBody Map<String, List<Long>> request) {
+        List<Long> messageIds = request.get("messageIds");
+        
+        if (messageIds != null && !messageIds.isEmpty()) {
+            List<ChatMessage> messages = chatMessagesRepository.findAllById(messageIds);
+            
+            for (ChatMessage message : messages) {
+                message.setRead(true);
+            }
+            
+            chatMessagesRepository.saveAll(messages);
+            return ResponseEntity.ok().build();
+        }
+        
+        return ResponseEntity.badRequest().body("No message IDs provided");
+    }
+    
+    @GetMapping("/unread-messages")
+    public List<ChatMessage> getUnreadMessages(@RequestHeader("Authorization") String token) {
+    	String email = jwtProvider.getEmailFromToken(token);
+    	Users user = userRepository.findByEmail(email);
+        return chatMessagesRepository.findByReceiverIdAndIsRead(user.getId(),false);
     }
 }

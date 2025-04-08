@@ -15,6 +15,7 @@
     "@zegocloud/zego-uikit-prebuilt": "^2.14.1",
     "axios": "^1.7.9",
     "chart.js": "^4.4.7",
+    "cloudinary-react": "^1.8.1",
     "emoji-picker-react": "^4.12.0",
     "lucide-react": "^0.471.1",
     "react": "^18.3.1",
@@ -22,7 +23,7 @@
     "react-dom": "^18.3.1",
     "react-icons": "^5.4.0",
     "react-router-dom": "^7.1.1",
-    "react-toastify": "^11.0.3",
+    "react-toastify": "^11.0.5",
     "sockjs-client": "^1.6.1"
   },
   "devDependencies": {

@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
-
+import BASE_URL from '../../../../api/BaseUrl'
 const SkillSelector = ({ selectedSkills, onSkillSelect, onSkillRemove }) => {
   const [open, setOpen] = useState(false);
   const [skills, setSkills] = useState([]);
@@ -15,7 +15,7 @@ const SkillSelector = ({ selectedSkills, onSkillSelect, onSkillRemove }) => {
       }
 
       try {
-        const response = await fetch('http://localhost:8080/api/skills', {
+        const response = await fetch(`${BASE_URL}/api/skills`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },

@@ -281,7 +281,7 @@ export default function ApplicationList() {
                     {application.additionalDetails || "N/A"}
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    <a
+                    {/* <a
                       href={`${BASE_URL}/download-resume/${application.resumePath
                         .split("/")
                         .pop()}`}
@@ -289,7 +289,19 @@ export default function ApplicationList() {
                       download
                     >
                       Download
-                    </a>
+                    </a> */}
+                    <a
+  href={
+    application.resumePath
+      ? `${BASE_URL}/download-resume/${application.resumePath.split("/").pop()}`
+      : "#"
+  }
+  className={`text-indigo-600 hover:text-indigo-900 font-medium ${!application.resumePath && "pointer-events-none text-gray-400"}`}
+  download={!!application.resumePath}
+>
+  Download
+</a>
+
                   </td>
                   <td className="px-6 py-4">
                     <span

@@ -149,6 +149,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		return applicationDataList;
 	}
 
+	@Transactional
 	@Override
 	public Page<ApplicationDetails> getApplicationsByJobId(Long jobId, int page, int size) {
 		Optional<Job> jobOptional = jobRepository.findById(jobId);

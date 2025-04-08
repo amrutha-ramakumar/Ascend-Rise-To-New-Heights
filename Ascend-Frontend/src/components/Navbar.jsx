@@ -63,12 +63,19 @@ export default function Navbar() {
             <>
               {/* Hide Dashboard when shouldHideLinks is true */}
               {!shouldHideLinks && (
-                <Link
+               <> <Link
                   to={`/${userRole}/dashboard`}
                   className="hover:text-blue-500 transition"
                 >
                   Dashboard
                 </Link>
+                <Link
+                to={`/notification`}
+                className="hover:text-blue-500 transition"
+              >
+                Notification
+              </Link>
+               </>
               )}
 
               {!shouldHideLinks && userRole === "employer" && (

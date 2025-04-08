@@ -42,7 +42,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [jobs, setJobs] = useState([]);
   const [jobsError, setJobsError] = useState(null);
-
+  
   useEffect(() => {
     // const fetchIndustries = async () => {
     //   try {
@@ -133,6 +133,7 @@ export default function Home() {
           <div className="text-center mb-16">
             <h1 className="text-4xl font-bold mb-4">Find Your Dream Job Now</h1>
             <p className="text-xl text-gray-600">Rise To New Heights</p>
+           
           </div>
 
           {/* Search Form */}
@@ -355,7 +356,7 @@ export default function Home() {
                 <strong>For Developers and Job Seekers:</strong> Whether
                 you&apos;re a fresher or an experienced professional, explore a
                 wide range of job opportunities tailored to your skills,
-                experience, and aspirations.
+                experience, and aspirations.  
               </p>
             </div>
             <div className="w-full md:w-1/3">

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-
+import BASE_URL from '../../../../api/BaseUrl'
 const EducationForm = ({ education, onClose }) => {
   const [formData, setFormData] = useState(
     education || {
@@ -29,8 +29,8 @@ const EducationForm = ({ education, onClose }) => {
 
     try {
       const url = education
-        ? `http://localhost:8080/api/education/${education.id}`
-        : 'http://localhost:8080/api/education';
+        ? `${BASE_URL}/api/education/${education.id}`
+        : `${BASE_URL}/api/education`;
       const method = education ? 'PUT' : 'POST';
 
       const response = await fetch(url, {

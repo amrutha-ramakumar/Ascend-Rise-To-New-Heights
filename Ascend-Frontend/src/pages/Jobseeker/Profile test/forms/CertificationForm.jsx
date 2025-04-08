@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-
+import BASE_URL from '../../../../api/BaseUrl'
 const CertificationForm = ({ certification, onClose }) => {
   const [formData, setFormData] = useState(
     certification || {
@@ -26,8 +26,8 @@ const CertificationForm = ({ certification, onClose }) => {
 
     try {
       const url = certification
-        ? `http://localhost:8080/api/certification/${certification.id}`
-        : 'http://localhost:8080/api/certification';
+        ? `${BASE_URL}/api/certification/${certification.id}`
+        : `${BASE_URL}/api/certification`;
       const method = certification ? 'PUT' : 'POST';
 
       const response = await fetch(url, {

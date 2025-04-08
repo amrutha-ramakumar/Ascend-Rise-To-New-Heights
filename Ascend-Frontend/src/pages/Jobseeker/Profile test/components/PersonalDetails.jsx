@@ -200,7 +200,7 @@
 import { useState } from 'react';
 import SkillSelector from './SkillSelector';
 import PropTypes from 'prop-types';
-
+import BASE_URL from '../../../../api/BaseUrl';
 const PersonalDetails = ({ profile }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -233,7 +233,7 @@ const PersonalDetails = ({ profile }) => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/jobseeker/update/${profile.id}`, {
+      const response = await fetch(`${BASE_URL}/api/jobseeker/update/${profile.id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

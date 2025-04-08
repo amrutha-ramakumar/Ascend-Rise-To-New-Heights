@@ -1,6 +1,9 @@
 package com.acend.chat;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -64,6 +67,29 @@ public class ChatController {
         }
     }
 
+    @GetMapping("/notification")
+    public ResponseEntity<?> getNotification(@RequestHeader("Authorization") String token
+                                    ) {
+    	String email = jwtProvider.getEmailFromToken(token);
+    	Users user = userRepository.findByEmail(email);
+       
+
+    	 if (user == null) {
+    	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found.");
+    	    }
+
+    	    // Get timestamp for 10 days ago
+    	    LocalDateTime tenDaysAgo = LocalDateTime.now().minusDays(10);
+
+    	    // Count messages received in the last 10 days
+    	    Long recentMessageCount = chatMessagesRepository.countByReceiverIdAndTimestampAfter(user.getId(), tenDaysAgo);
+
+    	    Map<String, Object> response = new HashMap<>();
+    	    response.put("recentMessages", recentMessageCount);
+
+    	    return ResponseEntity.ok(response);
+    }
+    
     
     
     @GetMapping("/{chatId}")

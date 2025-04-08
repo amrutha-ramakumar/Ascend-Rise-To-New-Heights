@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { Client } from "@stomp/stompjs"
 import EmojiPicker from "emoji-picker-react"
-import { Smile, Video, Paperclip, Download, X } from "lucide-react"
+import { Smile, Video, Paperclip, Download, X } from 'lucide-react'
 import { useAuth } from "../../../contexts/AuthContexts"
 import BASE_URL from "../../../api/BaseUrl"
 
@@ -48,6 +48,24 @@ export default function ChatRoom() {
     fetchPreviousMessages()
   }, [chatId])
 
+  const markMessagesAsRead = async (messageIds) => {
+    try {
+      if (!messageIds || messageIds.length === 0) return
+      
+      const token = localStorage.getItem("token")
+      await fetch(`${BASE_URL}/api/files/mark-read`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ messageIds }),
+      })
+    } catch (error) {
+      console.error("Error marking messages as read:", error)
+    }
+  }
+
   useEffect(() => {
     if (!chatId || !userId || !receiverId || !senderType) {
       console.error("Missing chatId, userId, receiverId, or senderType")
@@ -60,7 +78,8 @@ export default function ChatRoom() {
     }
 
     const stompClient = new Client({
-      brokerURL: "ws://localhost:8080/ws/websocket",
+      brokerURL: `ws://localhost:8080/ws/websocket`,
+      // brokerURL: `wss://backend.amrutharamakumar.online/ws/websocket`,
       reconnectDelay: 5000,
       debug: (str) => console.log(str),
       onConnect: () => {
@@ -69,6 +88,11 @@ export default function ChatRoom() {
         const subscription = stompClient.subscribe(`/user/${userId}/queue/messages/${chatId}`, (msg) => {
           const receivedMessage = JSON.parse(msg.body)
           setMessages((prev) => [...prev, receivedMessage])
+          
+          // Mark the message as read if it's from the other user
+          if (receivedMessage.senderId !== userId) {
+            markMessagesAsRead([receivedMessage.id])
+          }
         })
 
         clientRef.current = stompClient
@@ -88,6 +112,25 @@ export default function ChatRoom() {
       stompClient.deactivate()
     }
   }, [chatId, userId, receiverId, senderType])
+
+  useEffect(() => {
+    // Find unread messages that are not from the current user
+    const unreadMessages = messages.filter(msg => 
+      !msg.isRead && msg.senderId !== userId
+    )
+    
+    if (unreadMessages.length > 0) {
+      const messageIds = unreadMessages.map(msg => msg.id)
+      markMessagesAsRead(messageIds)
+      
+      // Update local state to mark messages as read
+      setMessages(prevMessages => 
+        prevMessages.map(msg => 
+          messageIds.includes(msg.id) ? { ...msg, isRead: true } : msg
+        )
+      )
+    }
+  }, [messages, userId])
 
   const sendMessage = (msgContent, fileUrl = "", fileType = "") => {
     if (clientRef.current && (msgContent.trim() !== "" || fileUrl)) {
@@ -248,7 +291,19 @@ export default function ChatRoom() {
               ) : (
                 <p className="text-sm">{msg.message}</p>
               )}
-              <p className="text-xs text-gray-400 text-right mt-1">{new Date(msg.timestamp).toLocaleTimeString()}</p>
+              
+              <div className="flex justify-between items-center mt-1">
+                <p className="text-xs text-gray-400">{new Date(msg.timestamp).toLocaleTimeString()}</p>
+                {msg.senderId === userId && (
+                  <span className="text-xs ml-2">
+                    {msg.isRead ? (
+                      <span className="text-blue-200">Read</span>
+                    ) : (
+                      <span className="text-gray-300">Sent</span>
+                    )}
+                  </span>
+                )}
+              </div>
             </div>
           ))
         )}
@@ -318,4 +373,3 @@ export default function ChatRoom() {
     </div>
   )
 }
-
